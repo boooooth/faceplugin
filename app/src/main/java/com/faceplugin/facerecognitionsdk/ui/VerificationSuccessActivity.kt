@@ -30,9 +30,9 @@ class VerificationSuccessActivity : AppCompatActivity() {
 
         val livenessScore = intent.getFloatExtra(EXTRA_LIVENESS_SCORE, 0f)
         findViewById<TextView>(R.id.txtLivenessScore).text =
-            String.format(Locale.US, "%.1f%%", livenessScore * 100)
+            String.format(Locale.US, "Real Person: %.1f%%", livenessScore * 100)
 
-        findViewById<Button>(R.id.btnContinue).setOnClickListener {
+        findViewById<Button>(R.id.btnDone).setOnClickListener {
             finish()
         }
     }

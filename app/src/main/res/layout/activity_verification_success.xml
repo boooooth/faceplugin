@@ -3,163 +3,109 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fp_bg"
+    android:background="#FFFFFF"
     android:padding="24dp">
 
-    <!-- Success Badge -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardSuccessIcon"
-        android:layout_width="76dp"
-        android:layout_height="76dp"
-        android:layout_marginTop="48dp"
-        app:cardBackgroundColor="#2E7D32"
-        app:cardCornerRadius="38dp"
-        app:cardElevation="6dp"
+    <!-- Center Content -->
+    <LinearLayout
+        android:id="@+id/centerContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/btnDone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.45">
+
+        <!-- Green Success Badge -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            app:cardBackgroundColor="#E8F5E9"
+            app:cardCornerRadius="44dp"
+            app:cardElevation="0dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="✓"
+                android:textColor="#2E7D32"
+                android:textSize="44sp"
+                android:textStyle="bold" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Main text -->
+        <TextView
+            android:id="@+id/txtSuccessTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Successfully Checked"
+            android:textColor="#111827"
+            android:textSize="26sp"
+            android:textStyle="bold" />
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="✓"
-            android:textColor="@android:color/white"
-            android:textSize="40sp"
-            android:textStyle="bold" />
-    </androidx.cardview.widget.CardView>
-
-    <!-- Success Title -->
-    <TextView
-        android:id="@+id/txtSuccessTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Verification Successful"
-        android:textColor="@android:color/white"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardSuccessIcon" />
-
-    <!-- Subtitle -->
-    <TextView
-        android:id="@+id/txtSuccessSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:text="Live human face confirmed"
-        android:textColor="@color/fp_muted"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtSuccessTitle" />
-
-    <!-- Face Preview Container -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardFace"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="28dp"
-        app:cardBackgroundColor="@color/fp_surface"
-        app:cardCornerRadius="75dp"
-        app:cardElevation="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtSuccessSubtitle">
-
-        <ImageView
-            android:id="@+id/imgVerifiedFace"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="Verified Face"
-            android:scaleType="centerCrop" />
-    </androidx.cardview.widget.CardView>
-
-    <!-- Details Card -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardDetails"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        app:cardBackgroundColor="@color/fp_surface"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="2dp"
-        app:layout_constraintTop_toBottomOf="@+id/cardFace">
-
-        <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/txtSuccessSubtitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:layout_marginTop="8dp"
+            android:text="Face liveness verification passed."
+            android:textColor="#6B7280"
+            android:textSize="15sp" />
 
-            <LinearLayout
+        <!-- Face Image Container -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardFace"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="28dp"
+            app:cardBackgroundColor="#F3F4F6"
+            app:cardCornerRadius="70dp"
+            app:cardElevation="2dp">
+
+            <ImageView
+                android:id="@+id/imgVerifiedFace"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:contentDescription="Verified Face"
+                android:scaleType="centerCrop" />
+        </androidx.cardview.widget.CardView>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Liveness Status"
-                    android:textColor="@color/fp_muted"
-                    android:textSize="15sp" />
+        <!-- Score Badge -->
+        <TextView
+            android:id="@+id/txtLivenessScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="#F3F4F6"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:text="Real Person: 98%"
+            android:textColor="#374151"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Real Person"
-                    android:textColor="@color/liveness_real"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+    </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="12dp"
-                android:background="@color/fp_stroke" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Liveness Score"
-                    android:textColor="@color/fp_muted"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/txtLivenessScore"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="98%"
-                    android:textColor="@android:color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- Continue / Next Page Button -->
+    <!-- Done / Back Button -->
     <Button
-        android:id="@+id/btnContinue"
+        android:id="@+id/btnDone"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginBottom="24dp"
-        android:backgroundTint="@color/btn_purple"
-        android:text="Continue to Dashboard"
+        android:layout_height="56dp"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="#6D28D9"
+        android:text="Done"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:textStyle="bold"
-        app:cornerRadius="12dp"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:cornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
