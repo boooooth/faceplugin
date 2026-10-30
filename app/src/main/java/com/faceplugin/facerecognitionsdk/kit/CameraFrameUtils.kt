@@ -15,26 +15,41 @@ object CameraFrameUtils {
     private const val ENGINE_MAX_SIDE = 1280
     private const val PREVIEW_MAX_SIDE = 640
 
-    /** Live Identify/Capture frames: NV21 → yuv2Bitmap (mode 6 back / 7 front) → long side ≤ 640. */
+    /** Live Identify/Capture frames: ImageProxy -> Bitmap -> rotate -> scale. */
     @JvmStatic
     @SuppressLint("UnsafeOptInUsageError")
     fun fromImageProxy(imageProxy: ImageProxy, backCamera: Boolean): Bitmap? {
-        val image = imageProxy.image ?: return null
-        val planes = image.planes
-        val yBuffer = planes[0].buffer
-        val uBuffer = planes[1].buffer
-        val vBuffer = planes[2].buffer
-        val ySize = yBuffer.remaining()
-        val uSize = uBuffer.remaining()
-        val vSize = vBuffer.remaining()
-        val nv21 = ByteArray(ySize + uSize + vSize)
-        yBuffer.get(nv21, 0, ySize)
-        vBuffer.get(nv21, ySize, vSize)
-        uBuffer.get(nv21, ySize + vSize, uSize)
-        val mode = if (backCamera) 6 else 7
-        val bitmap = FaceRecognitionSDK.yuv2Bitmap(nv21, image.width, image.height, mode) ?: return null
-        val frame = prepareForEngine(bitmap, PREVIEW_MAX_SIDE)
-        if (frame !== bitmap && !bitmap.isRecycled) bitmap.recycle()
+        val rawBitmap = try {
+            imageProxy.toBitmap()
+        } catch (e: Exception) {
+            null
+        } ?: return null
+
+        val rotationDegrees = imageProxy.imageInfo.rotationDegrees
+        val matrix = android.graphics.Matrix()
+        if (rotationDegrees != 0) {
+            matrix.postRotate(rotationDegrees.toFloat())
+        }
+        if (!backCamera) {
+            matrix.postScale(-1f, 1f)
+        }
+
+        val rotatedBitmap = if (!matrix.isIdentity) {
+            val rotated = Bitmap.createBitmap(
+                rawBitmap, 0, 0, rawBitmap.width, rawBitmap.height, matrix, true
+            )
+            if (rotated !== rawBitmap && !rawBitmap.isRecycled) {
+                rawBitmap.recycle()
+            }
+            rotated
+        } else {
+            rawBitmap
+        }
+
+        val frame = prepareForEngine(rotatedBitmap, PREVIEW_MAX_SIDE)
+        if (frame !== rotatedBitmap && !rotatedBitmap.isRecycled) {
+            rotatedBitmap.recycle()
+        }
         return frame
     }
 
