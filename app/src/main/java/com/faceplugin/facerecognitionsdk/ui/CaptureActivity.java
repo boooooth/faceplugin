@@ -3,6 +3,7 @@ package com.faceplugin.facerecognitionsdk.ui;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.RectF;
@@ -303,6 +304,22 @@ public class CaptureActivity extends AppCompatActivity implements CaptureView.Vi
             return;
         }
         capturedFace = shown;
+
+        boolean isSpoof = (shown.livenessLabel != null && !shown.livenessLabel.isEmpty()
+                && (shown.livenessLabel.toLowerCase().contains("spoof")
+                || shown.livenessLabel.toLowerCase().contains("fake")))
+                || (shown.liveness < SettingsActivity.getLivenessThreshold(context));
+
+        if (!isSpoof) {
+            Bitmap faceCrop = Utils.cropFace(capturedBitmap, shown);
+            VerificationSuccessActivity.verifiedFace = (faceCrop != null) ? faceCrop : capturedBitmap;
+            Intent intent = new Intent(this, VerificationSuccessActivity.class);
+            intent.putExtra(VerificationSuccessActivity.EXTRA_LIVENESS_SCORE, shown.liveness);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         if (shown.livenessLabel != null && !shown.livenessLabel.isEmpty()
                 && (shown.livenessLabel.toLowerCase().contains("spoof")
                 || shown.livenessLabel.toLowerCase().contains("fake"))) {
