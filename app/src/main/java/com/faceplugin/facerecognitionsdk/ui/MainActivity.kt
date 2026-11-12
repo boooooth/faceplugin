@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         btnStartDemo.isEnabled = false
         progressLoading.visibility = View.VISIBLE
-        textStatus.text = "Initializing AI Engine…"
+        textStatus.text = "Loading model…"
 
         client.activate(LICENSE_KEY) { code ->
             runOnUiThread {
