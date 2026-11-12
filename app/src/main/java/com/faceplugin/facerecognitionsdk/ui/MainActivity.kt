@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Engine is still initializing…", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            startActivity(Intent(this, CaptureActivity::class.java))
+            startActivity(Intent(this, LivenessActivity::class.java))
         }
 
         initSdk()

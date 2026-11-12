@@ -20,7 +20,8 @@
             android:name=".ui.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.FaceRecognitionSDK.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -60,8 +61,15 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".ui.LivenessActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.FaceRecognitionSDK.Light" />
+
+        <activity
             android:name=".ui.VerificationSuccessActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.FaceRecognitionSDK.Light" />
     </application>
 </manifest>

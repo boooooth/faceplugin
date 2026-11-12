@@ -33,6 +33,14 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <!-- Minimal white theme for the main / liveness / success flow. -->
+    <style name="Theme.FaceRecognitionSDK.Light" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:colorBackground">#FFFFFF</item>
+        <item name="android:statusBarColor">#FFFFFF</item>
+        <item name="android:navigationBarColor">#FFFFFF</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
     <style name="roundedImageView" parent="">
         <item name="cornerFamilyTopRight">rounded</item>
         <item name="cornerSizeTopRight">10dp</item>
