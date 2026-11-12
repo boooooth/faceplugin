@@ -20,6 +20,7 @@ import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import com.faceplugin.facerecognitionsdk.R
 import com.faceplugin.facerecognitionsdk.kit.ActiveLivenessCheckKind
+import com.faceplugin.facerecognitionsdk.kit.ActiveLivenessParams
 import com.faceplugin.facerecognitionsdk.kit.CameraFrameUtils
 import com.faceplugin.facerecognitionsdk.kit.CameraPreview
 import com.faceplugin.facerecognitionsdk.kit.FaceJson
@@ -57,6 +58,10 @@ class LivenessActivity : AppCompatActivity() {
         )
 
         private const val LENS = CameraSelector.LENS_FACING_FRONT
+        private const val YAW_THRESHOLD = 25f
+
+        /** Shows raw engine output (verdict / check / yaw) at the bottom. Turn off for release. */
+        private const val DEBUG_OVERLAY = false
         private val COLOR_DEFAULT = Color.parseColor("#111827")
         private val COLOR_OK = Color.parseColor("#16A34A")
         private val COLOR_FAIL = Color.parseColor("#DC2626")
@@ -67,6 +72,7 @@ class LivenessActivity : AppCompatActivity() {
     private lateinit var txtStep: TextView
     private lateinit var txtInstruction: TextView
     private lateinit var txtHint: TextView
+    private lateinit var txtDebug: TextView
 
     private val client by lazy { FaceRecognitionClient.get(this) }
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -101,6 +107,8 @@ class LivenessActivity : AppCompatActivity() {
         txtStep = findViewById(R.id.txtStep)
         txtInstruction = findViewById(R.id.txtInstruction)
         txtHint = findViewById(R.id.txtHint)
+        txtDebug = findViewById(R.id.txtDebug)
+        txtDebug.visibility = if (DEBUG_OVERLAY) android.view.View.VISIBLE else android.view.View.GONE
         findViewById<ImageButton>(R.id.btnClose).setOnClickListener { finish() }
 
         previewView.scaleType = PreviewView.ScaleType.FILL_CENTER
@@ -146,6 +154,8 @@ class LivenessActivity : AppCompatActivity() {
                 matchThreshold = threshold,
                 livenessType = IdentityLivenessType.ACTIVE,
                 checks = checks,
+                // 40° default is a very large head turn; 25° is comfortable but still deliberate.
+                params = ActiveLivenessParams(yawThreshold = YAW_THRESHOLD),
                 frontCamera = LENS == CameraSelector.LENS_FACING_FRONT,
             )
             val started = client.startVideoWorker(config)
@@ -174,6 +184,17 @@ class LivenessActivity : AppCompatActivity() {
         val faces = event.faces
         runOnUiThread {
             if (finished.get() || restarting.get()) return@runOnUiThread
+            if (DEBUG_OVERLAY) {
+                val f = faces.firstOrNull()
+                txtDebug.text = if (f == null) "no face" else String.format(
+                    java.util.Locale.US,
+                    "%s · %s · p=%.2f\nyaw=%.0f° pitch=%.0f° (need %.0f°)",
+                    f.activeLiveness?.verdict ?: "-",
+                    f.activeLiveness?.checkType ?: "-",
+                    f.activeLiveness?.progress ?: 0.0,
+                    f.yaw, f.pitch, YAW_THRESHOLD,
+                )
+            }
             when {
                 faces.isEmpty() -> showPrompt("Position your face in the circle", null)
                 faces.size > 1 -> showPrompt("Only one face, please", null)
@@ -291,8 +312,11 @@ class LivenessActivity : AppCompatActivity() {
 
     private fun analyze(image: ImageProxy) {
         val frame = try {
+            // Pass backCamera=true so the frame is only rotated upright, never mirrored.
+            // The SDK's turn_left / turn_right checks expect the true (unmirrored) camera
+            // image; a selfie-mirrored frame makes every head turn read as the wrong way.
             if (!workerReady || finished.get()) null
-            else CameraFrameUtils.fromImageProxy(image, LENS == CameraSelector.LENS_FACING_BACK)
+            else CameraFrameUtils.fromImageProxy(image, true)
         } catch (_: Exception) {
             null
         } finally {
